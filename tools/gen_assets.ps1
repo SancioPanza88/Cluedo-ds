@@ -140,7 +140,7 @@ function Convert-Photo([string]$inFile, [string]$outPng, [int]$tw, [int]$th, [st
 # ---------- 2. Ritratti 64x64 e stanze 128x96 ----------
 $portraits = @('rosso','senape','bianca','verdi','pavone','prugna')
 foreach ($p in $portraits) {
-    Convert-Photo (Join-Path $srcDir "suspect-$p.jpg") (Join-Path $gfxDir "suspect_$p.png") 64 64 'square'
+    Convert-Photo (Join-Path $srcDir "suspect-$p.jpg") (Join-Path $gfxDir "suspect_$p.png") 96 96 'square'
 }
 $rooms = @('cucina','ballo','serra','pranzo','biliardo','biblioteca','salotto','ingresso','studio')
 foreach ($r in $rooms) {

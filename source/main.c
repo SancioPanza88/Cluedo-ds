@@ -470,6 +470,9 @@ static void setupGame(void) {
         ui_msg("Il Conte Nero e' morto.", t);
     }
     ui_showHand(&G);
+    ui_msg("LE 9 STANZE",
+           "Cucina, Sala da Ballo, Serra\nSala da Pranzo, Sala Biliardo\nBiblioteca, Salotto\nIngresso, Studio");
+}
 }
 
 // ---------- main ----------

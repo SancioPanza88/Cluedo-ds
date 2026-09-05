@@ -34,12 +34,12 @@ typedef struct {
 } Art;
 
 static const Art SUSP_ART[6] = {
-    {suspect_rossoTiles, suspect_rossoTilesLen, suspect_rossoMap, suspect_rossoMapLen, 8, 8, suspect_rossoPal, suspect_rossoPalLen},
-    {suspect_senapeTiles, suspect_senapeTilesLen, suspect_senapeMap, suspect_senapeMapLen, 8, 8, suspect_senapePal, suspect_senapePalLen},
-    {suspect_biancaTiles, suspect_biancaTilesLen, suspect_biancaMap, suspect_biancaMapLen, 8, 8, suspect_biancaPal, suspect_biancaPalLen},
-    {suspect_verdiTiles, suspect_verdiTilesLen, suspect_verdiMap, suspect_verdiMapLen, 8, 8, suspect_verdiPal, suspect_verdiPalLen},
-    {suspect_pavoneTiles, suspect_pavoneTilesLen, suspect_pavoneMap, suspect_pavoneMapLen, 8, 8, suspect_pavonePal, suspect_pavonePalLen},
-    {suspect_prugnaTiles, suspect_prugnaTilesLen, suspect_prugnaMap, suspect_prugnaMapLen, 8, 8, suspect_prugnaPal, suspect_prugnaPalLen},
+    {suspect_rossoTiles, suspect_rossoTilesLen, suspect_rossoMap, suspect_rossoMapLen, 12, 12, suspect_rossoPal, suspect_rossoPalLen},
+    {suspect_senapeTiles, suspect_senapeTilesLen, suspect_senapeMap, suspect_senapeMapLen, 12, 12, suspect_senapePal, suspect_senapePalLen},
+    {suspect_biancaTiles, suspect_biancaTilesLen, suspect_biancaMap, suspect_biancaMapLen, 12, 12, suspect_biancaPal, suspect_biancaPalLen},
+    {suspect_verdiTiles, suspect_verdiTilesLen, suspect_verdiMap, suspect_verdiMapLen, 12, 12, suspect_verdiPal, suspect_verdiPalLen},
+    {suspect_pavoneTiles, suspect_pavoneTilesLen, suspect_pavoneMap, suspect_pavoneMapLen, 12, 12, suspect_pavonePal, suspect_pavonePalLen},
+    {suspect_prugnaTiles, suspect_prugnaTilesLen, suspect_prugnaMap, suspect_prugnaMapLen, 12, 12, suspect_prugnaPal, suspect_prugnaPalLen},
 };
 static const Art ROOM_ART[9] = {
     {room_cucinaTiles, room_cucinaTilesLen, room_cucinaMap, room_cucinaMapLen, 16, 12, room_cucinaPal, room_cucinaPalLen},
@@ -56,9 +56,11 @@ static const Art ROOM_ART[9] = {
 static int bgArt = -1;
 
 void art_init(void) {
-    // attiva anche BG2 sul main engine e prepara il layer dedicato
+    // attiva anche BG2 sul main engine e prepara il layer dedicato.
+    // Mappa a 12KB (mapBase 6): 16KB (mapBase 8) collide con i tile del
+    // tabellone (tileBase 1 = 16KB) e li distruggerebbe!
     videoSetMode(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE);
-    bgArt = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 8, 3);
+    bgArt = bgInit(2, BgType_Text8bpp, BgSize_T_256x256, 6, 3);
     bgHide(bgArt);
 }
 
@@ -67,10 +69,12 @@ static void art_show(const Art *a) {
     memcpy(BG_PALETTE, a->pal, a->palLen);
     u16 *map = bgGetMapPtr(bgArt);
     for (int i = 0; i < 32 * 32; i++) map[i] = 0;
+    // Con -mLs grit salva la mappa larga 32 tile: passo 32, non mw.
+    int stride = (a->mapLen == (unsigned int)(a->mw * a->mh * 2)) ? a->mw : 32;
     int ox = (32 - a->mw) / 2, oy = (24 - a->mh) / 2;
     for (int r = 0; r < a->mh; r++)
         for (int c = 0; c < a->mw; c++)
-            map[(oy + r) * 32 + ox + c] = a->map[r * a->mw + c];
+            map[(oy + r) * 32 + ox + c] = a->map[r * stride + c];
     bgHide(board_bgId());
     bgHide(board_overId());
     board_hideSprites();
