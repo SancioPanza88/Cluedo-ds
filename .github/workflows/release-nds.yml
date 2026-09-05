@@ -16,6 +16,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout (serve a gh release)
+        uses: actions/checkout@v4
+
       - name: Scarica artifact della build
         uses: actions/download-artifact@v4
         with:
