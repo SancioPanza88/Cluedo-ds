@@ -473,7 +473,6 @@ static void setupGame(void) {
     ui_msg("LE 9 STANZE",
            "Cucina, Sala da Ballo, Serra\nSala da Pranzo, Sala Biliardo\nBiblioteca, Salotto\nIngresso, Studio");
 }
-}
 
 // ---------- main ----------
 int main(int argc, char **argv) {
