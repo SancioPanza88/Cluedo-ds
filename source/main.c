@@ -18,19 +18,23 @@ static void waitN(int n) {
     for (int i = 0; i < n; i++) ui_frame();
 }
 
-static void seedRng(void) {
-    unsigned int c = 0;
-    ui_clear();
-    printf("CLUEDO DS\nDelitto a Villa Nera\n\nPremi un tasto...");
+// Schermata titolo (sopra: logo, sotto: menu). Il seed RNG deriva dai
+// frame trascorsi (ui_frames): piu' pensi, piu' e' casuale.
+static void helpScreen(void) {
+    ui_msg("COME SI GIOCA 1/2",
+           "Scopo: scopri CHI, CON COSA\ne DOVE prima delle IA.\n\nD-pad: cursore e menu\nA/TAP: conferma\nB: indietro\nSTART: conferma");
+    ui_msg("COME SI GIOCA 2/2",
+           "Tira, muovi sulle caselle\noro ed entra in stanza:\nIPOTESI o PASSAGGIO.\nGli altri smentiscono.\nCerto? ACCUSA!\nSbagli = eliminato.\nTaccuino: ?=ignota *=sosp.\nV=esclusa X=no.");
+}
+
+static void titleScreen(void) {
+    static const char *items[] = {"NUOVA INDAGINE", "COME SI GIOCA"};
+    art_showTitle();
     for (;;) {
-        ui_frame();
-        c = c * 31 + 7;
-        if (keysDown() & (KEY_A | KEY_START | KEY_TOUCH)) break;
-    }
-    srand(c ^ 0x9E3779B9u);
-    for (;;) { // anti-rimbalzo
-        ui_frame();
-        if (!(keysHeld() & (KEY_A | KEY_START | KEY_TOUCH))) break;
+        int c = ui_menu("DELITTO A VILLA NERA\nCluedo DS", items, 2, 0);
+        srand(ui_frames * 2654435761u + 0x9E3779B9u);
+        if (c == 0) return;
+        helpScreen();
     }
 }
 
@@ -477,8 +481,8 @@ int main(int argc, char **argv) {
     board_init();
     art_init();
     sfx_init();
-    seedRng();
     for (;;) {
+        titleScreen();
         setupGame();
         while (!G.over) {
             Player *p = &G.players[G.turn];

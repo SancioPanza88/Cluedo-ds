@@ -21,6 +21,7 @@
 #include "room_salotto.h"
 #include "room_ingresso.h"
 #include "room_studio.h"
+#include "title_logo.h"
 
 typedef struct {
     const unsigned int *tiles;
@@ -85,6 +86,12 @@ void art_showSuspect(int i) {
 void art_showRoom(int i) {
     if (i < 0 || i > 8) return;
     art_show(&ROOM_ART[i]);
+}
+
+void art_showTitle(void) {
+    static const Art TITLE = {title_logoTiles, title_logoTilesLen, title_logoMap,
+                              title_logoMapLen, 32, 24, title_logoPal, title_logoPalLen};
+    art_show(&TITLE);
 }
 
 void art_hide(const void *gamePtr) {

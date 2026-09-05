@@ -146,6 +146,8 @@ $rooms = @('cucina','ballo','serra','pranzo','biliardo','biblioteca','salotto','
 foreach ($r in $rooms) {
     Convert-Photo (Join-Path $srcDir "room-$r.jpg") (Join-Path $gfxDir "room_$r.png") 128 96 '43'
 }
+# Titolo 256x192 dal logo (stesso quantizzatore)
+Convert-Photo (Join-Path $srcDir 'logo.jpg') (Join-Path $gfxDir 'title_logo.png') 256 192 '43'
 
 # ---------- 3. Tiles tabellone (array C deterministici, niente grit) ----------
 function RGB15([int]$r,[int]$g,[int]$b) { return ($r -shr 3) -bor (($g -shr 3) -shl 5) -bor (($b -shr 3) -shl 10) }

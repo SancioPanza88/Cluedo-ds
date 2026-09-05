@@ -4,6 +4,15 @@ Porting per Nintendo DS del gioco `cluedo.html`: stesse regole, stessi
 personaggi/armi/stanze, stessa IA. La presentazione e' adattata all'hardware
 (schermi 256x192, niente mouse): **sopra il tabellone, sotto i menu touch**.
 
+## Scarica (file diretto, senza zip)
+
+Ultima build automatica: **https://github.com/SancioPanza88/Cluedo-ds/releases/latest/download/cluedo-ds.nds**
+
+Funziona su: **melonDS** (PC), **R4 / TwilightMenu++** (DS, DSi, 3DS).
+Il gioco non usa salvataggi, SD, DLDI, NitroFS o WiFi: e' una ROM pulita
+che parte ovunque, anche da flashcart Slot-1. Copia il `.nds` sulla
+microSD (o trascinalo in melonDS) e gioca.
+
 ## Stato del porting
 
 - Regole 1:1 (busta, distribuzione, ipotesi, smentite, passaggi segreti, accuse).
@@ -32,7 +41,8 @@ Differenze volute rispetto all'HTML (limiti hardware veri):
 1. Crea un repo con **il contenuto di questa cartella come root**
    (`Makefile`, `source/`, `graphics/`, `icon.gif`, `.github/`).
 2. Pusha: la action `Build NDS` compila con `skylyrac/blocksds:slim-latest`.
-3. Scarica `cluedo-ds.nds` dagli Artifact.
+3. Ogni build verde pubblica il `.nds` diretto nella release `latest`
+   (workflow `Release NDS`): niente zip da aprire.
 
 Compilazione locale: installa BlocksDS (docs: blocksds.skylyrac.net),
 apri la shell del toolchain ed esegui `make`.

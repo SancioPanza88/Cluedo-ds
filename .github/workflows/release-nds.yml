@@ -1,0 +1,34 @@
+# Pubblica il .nds DIRETTO (senza zip) a ogni build verde su main.
+# GitHub Artifacts viaggia sempre zippato: questa workflow copia il .nds
+# in una release rolling "latest" scaricabile come file raw.
+name: Release NDS
+
+on:
+  workflow_run:
+    workflows: ["Build NDS"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Scarica artifact della build
+        uses: actions/download-artifact@v4
+        with:
+          name: cluedo-ds
+          path: out
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pubblica release rolling
+        run: |
+          gh release delete latest --cleanup-tag -y || true
+          gh release create latest out/*.nds \
+            --title "Ultima build (main)" \
+            --notes "File .nds diretto, senza zip. Build automatica dall'ultimo commit su main."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

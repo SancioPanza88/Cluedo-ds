@@ -4,6 +4,8 @@
 // Un frame: VBlank + scanKeys + oamUpdate. Usare ovunque al posto delle
 // chiamate grezze (scanKeys va chiamato 1 volta per frame nel game loop).
 void ui_frame(void);
+// Contatore frame globali (utile come seed RNG).
+extern unsigned int ui_frames;
 void ui_clear(void);
 // Menu verticale: D-pad + A, B annulla (se allowCancel), TAP sulla riga.
 // Ritorna indice scelto o -1.

@@ -9,7 +9,10 @@ void ui_frame(void) {
     swiWaitForVBlank();
     scanKeys();
     oamUpdate(&oamMain);
+    ui_frames++;
 }
+
+unsigned int ui_frames = 0;
 
 void ui_clear(void) {
     printf("\x1b[2J");
