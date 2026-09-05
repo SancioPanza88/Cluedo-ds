@@ -1,0 +1,32 @@
+name: Build NDS
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: skylyrac/blocksds:slim-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verifica asset (ogni PNG deve avere il .grit gemello)
+        run: |
+          ls graphics/*.png graphics/*.grit source/*.c source/*.h Makefile icon.gif
+          echo "---"
+          ls graphics/*.png | wc -l
+          ls graphics/*.grit | wc -l
+
+      - name: Compila ROM
+        run: make -j$(nproc)
+
+      - name: Carica .nds
+        uses: actions/upload-artifact@v4
+        with:
+          name: cluedo-ds
+          path: "*.nds"
+          if-no-files-found: error
