@@ -21,7 +21,7 @@ static void waitN(int n) {
 static void seedRng(void) {
     unsigned int c = 0;
     ui_clear();
-    iprintf("CLUEDO DS\nDelitto a Villa Nera\n\nPremi un tasto...");
+    printf("CLUEDO DS\nDelitto a Villa Nera\n\nPremi un tasto...");
     for (;;) {
         ui_frame();
         c = c * 31 + 7;
@@ -53,7 +53,7 @@ static void resolveSuggestion(int suggester, int sid, int wid, int rid) {
         char t[96];
         snprintf(t, sizeof(t), "%s ipotizza:\n%s + %s\nin %s", G.players[suggester].name, a, b, c);
         ui_clear();
-        iprintf("%s\n", t);
+        printf("%s\n", t);
     }
     waitN(50);
     unsigned int want = wantMask(sid, wid, rid);
@@ -101,11 +101,11 @@ static void resolveSuggestion(int suggester, int sid, int wid, int rid) {
         redrawPawns();
     } else if (!sh->ai) {
         ui_clear();
-        iprintf("Hai mostrato una carta\nin segreto a %s.\n", sg->name);
+        printf("Hai mostrato una carta\nin segreto a %s.\n", sg->name);
         waitN(40);
     } else {
         ui_clear();
-        iprintf("%s mostra una carta\nin segreto a %s.\n", sh->name, sg->name);
+        printf("%s mostra una carta\nin segreto a %s.\n", sh->name, sg->name);
         waitN(40);
     }
 }
@@ -135,7 +135,7 @@ static void resolveAccuse(int pi, int sid, int wid, int rid) {
     card_name(CARD_R(rid), c, sizeof(c));
     if (accuseCorrect(&G, sid, wid, rid)) {
         ui_clear();
-        iprintf("%s accusa:\n%s + %s\nin %s\n\nCOLPEVOLE!", G.players[pi].name, a, b, c);
+        printf("%s accusa:\n%s + %s\nin %s\n\nCOLPEVOLE!", G.players[pi].name, a, b, c);
         G.over = 1;
         G.winner = pi;
         if (!G.players[pi].ai) sfx_win(); else sfx_bad();
@@ -145,8 +145,8 @@ static void resolveAccuse(int pi, int sid, int wid, int rid) {
         sfx_bad();
         G.players[pi].out = 1;
         ui_clear();
-        iprintf("%s accusa:\n%s + %s\nin %s\n\nSBAGLIATO! Eliminato.\n", G.players[pi].name, a, b, c);
-        iprintf("Le sue carte restano\nin gioco per smentire.\n");
+        printf("%s accusa:\n%s + %s\nin %s\n\nSBAGLIATO! Eliminato.\n", G.players[pi].name, a, b, c);
+        printf("Le sue carte restano\nin gioco per smentire.\n");
         waitN(80);
         if (!G.players[pi].ai) {
             fastMode = 1;
@@ -240,12 +240,12 @@ static int humanMove(int pi) {
         ui_clear();
         {
             int dr = doorRoom(lx[cur], ly[cur]);
-            if (dr >= 0) iprintf("Dadi:%d Meta %d/%d\n%s -> ENTRA in\n%s\n", G.dice, cur + 1, nl,
+            if (dr >= 0) printf("Dadi:%d Meta %d/%d\n%s -> ENTRA in\n%s\n", G.dice, cur + 1, nl,
                                  G.players[pi].name, ROOMS[dr].name);
-            else iprintf("Dadi:%d Meta %d/%d\n%s: cella [%d,%d]\n", G.dice, cur + 1, nl,
+            else printf("Dadi:%d Meta %d/%d\n%s: cella [%d,%d]\n", G.dice, cur + 1, nl,
                          G.players[pi].name, lx[cur], ly[cur]);
         }
-        iprintf("\nFrecce:scorri A:vai\n%s", wasRoom >= 0 ? "B:resta qui" : " ");
+        printf("\nFrecce:scorri A:vai\n%s", wasRoom >= 0 ? "B:resta qui" : " ");
         ui_frame();
         unsigned int down = keysDown();
         if (down & KEY_LEFT) { cur = (cur + nl - 1) % nl; sfx_click(); }
@@ -356,12 +356,12 @@ static void aiTurn(int pi) {
     char t[64];
     snprintf(t, sizeof(t), "Turno %d: %s indaga...", G.turnCount, p->name);
     ui_clear();
-    iprintf("%s\n", t);
+    printf("%s\n", t);
     waitN(40);
     int s = 0, w = 0, r = 0;
     if (aiConfident(p, G.turnCount, &s, &w, &r) && (rand() % 100 < (G.turnCount >= 28 ? 50 : 90))) {
         ui_clear();
-        iprintf("%s e' certo...\nACCUSA!\n", p->name);
+        printf("%s e' certo...\nACCUSA!\n", p->name);
         waitN(50);
         resolveAccuse(pi, s, w, r);
         return;
@@ -383,20 +383,20 @@ static void aiTurn(int pi) {
     int goal = aiTargetRoom(&G, pi);
     if (here >= 0 && goal == here) {
         ui_clear();
-        iprintf("%s resta in\n%s.\n", p->name, ROOMS[goal].name);
+        printf("%s resta in\n%s.\n", p->name, ROOMS[goal].name);
     } else if (goal >= 0 && roomDist(cx, cy, goal) <= G.dice) {
         G.pos[p->susp].inRoom = 1;
         G.pos[p->susp].room = goal;
         sfx_door();
         ui_clear();
-        iprintf("%s entra in\n%s.\n", p->name, ROOMS[goal].name);
+        printf("%s entra in\n%s.\n", p->name, ROOMS[goal].name);
     } else {
         if (here >= 0 && ROOMS[here].passage >= 0 && (rand() % 100) < 60) {
             int dest = ROOMS[here].passage;
             if (!(p->seen & CARD_BIT(CARD_R(dest))) || (rand() % 100) < 30) {
                 G.pos[p->susp].room = dest;
                 ui_clear();
-                iprintf("%s usa il\npassaggio -> %s.\n", p->name, ROOMS[dest].name);
+                printf("%s usa il\npassaggio -> %s.\n", p->name, ROOMS[dest].name);
                 sfx_door();
                 redrawPawns();
                 waitN(40);
@@ -406,7 +406,7 @@ static void aiTurn(int pi) {
         aiStepToward(&G, pi, goal, G.dice);
         sfx_step();
         ui_clear();
-        iprintf("%s si aggira\nper Villa Nera...\n", p->name);
+        printf("%s si aggira\nper Villa Nera...\n", p->name);
     }
     redrawPawns();
     waitN(40);
@@ -423,7 +423,7 @@ afterMove:
                 int ns = aiUnknown(p, 0, NULL), nw = aiUnknown(p, 1, NULL), nr = aiUnknown(p, 2, NULL);
                 if (ns == 1 && nw == 1 && nr == 1 && (rand() % 100) < 85) {
                     ui_clear();
-                    iprintf("%s ha capito tutto!\nACCUSA!\n", p->name);
+                    printf("%s ha capito tutto!\nACCUSA!\n", p->name);
                     waitN(40);
                     resolveAccuse(pi, s2, w2, r2);
                     return;
@@ -440,12 +440,12 @@ static void setupGame(void) {
     // pedina
     for (;;) {
         ui_clear();
-        iprintf("DELITTO A VILLA NERA\n\nScegli pedina:\n<FRECCE> cambia\n\n");
-        iprintf("  %s\n  %s\n", SUSP_NAMES[sel],
+        printf("DELITTO A VILLA NERA\n\nScegli pedina:\n<FRECCE> cambia\n\n");
+        printf("  %s\n  %s\n", SUSP_NAMES[sel],
                 sel == 0 ? "la femme fatale" : sel == 1 ? "il colonnello" :
                 sel == 2 ? "la governante" : sel == 3 ? "il reverendo" :
                 sel == 4 ? "la contessa" : "il professore");
-        iprintf("\nA:conferma");
+        printf("\nA:conferma");
         if (sel != shown) { art_showSuspect(sel); shown = sel; }
         ui_frame();
         unsigned int down = keysDown();
@@ -494,12 +494,12 @@ int main(int argc, char **argv) {
         }
         ui_clear();
         if (G.winner >= 0 && !G.players[G.winner].ai)
-            iprintf("HAI VINTO, detective!\n");
+            printf("HAI VINTO, detective!\n");
         else if (G.winner >= 0)
-            iprintf("%s vince!\nSara' per la prossima.\n", G.players[G.winner].name);
+            printf("%s vince!\nSara' per la prossima.\n", G.players[G.winner].name);
         else
-            iprintf("Tutti eliminati...\n");
-        iprintf("\nSTART: nuova indagine");
+            printf("Tutti eliminati...\n");
+        printf("\nSTART: nuova indagine");
         for (;;) {
             ui_frame();
             if (keysDown() & KEY_START) break;

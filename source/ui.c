@@ -12,7 +12,7 @@ void ui_frame(void) {
 }
 
 void ui_clear(void) {
-    iprintf("\x1b[2J");
+    printf("\x1b[2J");
 }
 
 static int countRows(const char *s) {
@@ -28,12 +28,12 @@ int ui_menu(const char *title, const char *items[], int n, int allowCancel) {
     for (;;) {
         ui_clear();
         int row = 0;
-        if (title) { iprintf("%s\n\n", title); row = countRows(title) + 1; }
+        if (title) { printf("%s\n\n", title); row = countRows(title) + 1; }
         int startRow = row;
         for (int i = 0; i < n; i++) {
-            iprintf("%c %s\n", i == sel ? '>' : ' ', items[i]);
+            printf("%c %s\n", i == sel ? '>' : ' ', items[i]);
         }
-        iprintf("\n%s", allowCancel ? "A:ok B:indietro TAP:riga" : "A:ok TAP:riga");
+        printf("\n%s", allowCancel ? "A:ok B:indietro TAP:riga" : "A:ok TAP:riga");
         for (;;) {
             ui_frame();
             unsigned int down = keysDown();
@@ -63,7 +63,7 @@ int ui_dice(int *d1, int *d2) {
     int a = 1, b = 1;
     for (int f = 0; f < 9; f++) {
         ui_clear();
-        iprintf("Lancio dadi...\n\n  [ %d ]  [ %d ]\n", a, b);
+        printf("Lancio dadi...\n\n  [ %d ]  [ %d ]\n", a, b);
         a = (a * 5 + 3) % 6 + 1; // animazione (il vero tiro usa rand)
         b = (b * 3 + 5) % 6 + 1;
         for (int w = 0; w < 7; w++) ui_frame();
@@ -71,7 +71,7 @@ int ui_dice(int *d1, int *d2) {
     a = rand() % 6 + 1;
     b = rand() % 6 + 1;
     ui_clear();
-    iprintf("Lancio dadi...\n\n  [ %d ]  [ %d ]\n\nTotale: %d\n", a, b, a + b);
+    printf("Lancio dadi...\n\n  [ %d ]  [ %d ]\n\nTotale: %d\n", a, b, a + b);
     for (int w = 0; w < 30; w++) ui_frame();
     if (d1) *d1 = a;
     if (d2) *d2 = b;
@@ -80,9 +80,9 @@ int ui_dice(int *d1, int *d2) {
 
 void ui_msg(const char *title, const char *body) {
     ui_clear();
-    if (title) iprintf("%s\n\n", title);
-    if (body) iprintf("%s\n", body);
-    iprintf("\n-- A:continua --");
+    if (title) printf("%s\n\n", title);
+    if (body) printf("%s\n", body);
+    printf("\n-- A:continua --");
     ui_waitKey();
 }
 
@@ -105,14 +105,14 @@ void ui_showHand(const void *gamePtr) {
     const Game *g = (const Game *)gamePtr;
     char buf[40];
     ui_clear();
-    iprintf("La tua mano (%s):\n\n", g->players[0].name);
+    printf("La tua mano (%s):\n\n", g->players[0].name);
     for (int c = 0; c < NCARDS; c++) {
         if (g->players[0].hand & CARD_BIT(c)) {
             card_name(c, buf, sizeof(buf));
-            iprintf("- %s\n", buf);
+            printf("- %s\n", buf);
         }
     }
-    iprintf("\n-- A:continua --");
+    printf("\n-- A:continua --");
     ui_waitKey();
 }
 
@@ -131,9 +131,9 @@ void ui_notebook(void *gamePtr) {
         ui_clear();
         // 2 righe header + 1 vuota + 21 carte = 24 righe esatte.
         // L'ultima riga e' stampata SENZA newline finale o la console scorre.
-        iprintf("TACCUINO ?=ignota *=sospetta\nV=esclusa X=no A:cambia B:esci\n\n");
+        printf("TACCUINO ?=ignota *=sospetta\nV=esclusa X=no A:cambia B:esci\n\n");
         for (int i = 0; i < NCARDS; i++)
-            iprintf("%c %s%s", i == sel ? '>' : ' ', rows[i], i < NCARDS - 1 ? "\n" : "");
+            printf("%c %s%s", i == sel ? '>' : ' ', rows[i], i < NCARDS - 1 ? "\n" : "");
         for (;;) {
             ui_frame();
             unsigned int down = keysDown();
